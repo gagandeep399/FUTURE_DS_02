@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Customer Churn Dashboard</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root{--bg:#0F1720;--panel:#161F2B;--line:#26333F;--ink:#EDF2F6;--sub:#8DA0AF;--a:#E5604D;--b:#3FB8AF;--c:#E8A33D;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:light){:root:not([data-theme="dark"]){--bg:#F5F7F8;--panel:#fff;--line:#E3E8EB;--ink:#152029;--sub:#5C6B75}}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,"Inter","Segoe UI",Arial,sans-serif}
+.wrap{max-width:1100px;margin:0 auto;padding:28px 20px 60px}
+.eyebrow{color:var(--a);font-size:13px;margin:0 0 6px}
+h1{font-size:clamp(24px,4vw,34px);margin:0 0 8px;font-weight:650}
+.sub{color:var(--sub);font-size:14.5px;max-width:62ch;line-height:1.5;margin:0}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin:26px 0}
+.kpi{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:16px 18px}
+.kpi .l{color:var(--sub);font-size:12.5px;margin-bottom:8px}.kpi .v{font-size:22px;font-weight:650}
+.kpi.hot .v{color:var(--a)}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:20px;margin-bottom:20px}
+.panel h2{font-size:16px;margin:0 0 3px;font-weight:600}.hint{color:var(--sub);font-size:12.5px;margin:0 0 14px}
+.box{height:260px;position:relative}
+.grid{display:grid;grid-template-columns:1fr;gap:20px}@media(min-width:800px){.grid{grid-template-columns:1fr 1fr}}
+.ins ol{margin:0;padding-left:20px;font-size:14.5px;line-height:1.65}.ins li{margin-bottom:10px}.ins b{color:var(--c)}
+.ins ul{color:var(--sub);font-size:13.5px;line-height:1.7;padding-left:18px;margin:8px 0 0}
+footer{color:var(--sub);font-size:12px;text-align:center;margin-top:28px}
+</style></head><body><div class="wrap">
+<p class="eyebrow">Customer Retention &amp; Churn Analysis - Task 2</p>
+<h1>Telco Customer Churn Dashboard</h1>
+<p class="sub">Who is leaving, when they leave, and what keeps customers. Based on 7,032 telecom customers after cleaning.</p>
+<div class="kpis" id="k"></div>
+<div class="grid">
+<div class="panel"><h2>Churn rate by contract type</h2><p class="hint">% of customers who churned</p><div class="box"><canvas id="c1"></canvas></div></div>
+<div class="panel"><h2>Churn rate by tenure</h2><p class="hint">Risk is highest in the first months</p><div class="box"><canvas id="c2"></canvas></div></div>
+<div class="panel"><h2>Churn rate by internet service</h2><p class="hint">Fiber optic customers leave most</p><div class="box"><canvas id="c3"></canvas></div></div>
+<div class="panel"><h2>Churn rate by payment method</h2><p class="hint">Electronic check is the riskiest</p><div class="box"><canvas id="c4"></canvas></div></div>
+<div class="panel"><h2>Churn rate by Tech Support</h2><p class="hint">Support keeps customers</p><div class="box"><canvas id="c5"></canvas></div></div>
+<div class="panel"><h2>Median monthly bill</h2><p class="hint">Churned vs retained customers ($)</p><div class="box"><canvas id="c6"></canvas></div></div>
+</div>
+<div class="panel ins"><h2>Key insights &amp; recommendations</h2><ol>
+<li><b>Contract type is the biggest driver.</b> Month-to-month customers churn at 42.7%, versus 11.3% on one-year and 2.8% on two-year contracts.</li>
+<li><b>Churn happens early.</b> Customers in their first 6 months churn at 53%, falling to under 10% after 4 years.</li>
+<li><b>Fiber optic and higher bills.</b> Fiber customers churn at 41.9% (DSL 19%), and churned customers pay a higher median bill ($79.6 vs $64.4).</li>
+<li><b>Support and payment method matter.</b> Customers without Tech Support churn at 41.6% versus 15.2% with it, and electronic check users churn at 45.3%.
+<ul><li>Incentivise month-to-month customers to move to 1-2 year contracts</li><li>Run onboarding and check-ins during the first 3-6 months</li><li>Review fiber pricing and service quality</li><li>Bundle Tech Support and Online Security for new customers</li><li>Encourage automatic payment methods</li></ul></li>
+</ol></div>
+<footer>Future Interns - Data Science &amp; Analytics, Task 2 (2026)</footer>
+</div>
+<script>
+const D={"kpis": {"total": 7032, "churned": 1869, "rate": 26.58, "tenure": 32.4, "monthly": 64.8}, "contract": {"labels": ["Month-to-month", "One year", "Two year"], "values": [42.7, 11.3, 2.8]}, "internet": {"labels": ["Fiber optic", "DSL", "No"], "values": [41.9, 19.0, 7.4]}, "tenure": {"labels": ["0-6 mo", "7-12 mo", "13-24 mo", "25-48 mo", "49+ mo"], "values": [53.3, 35.9, 28.7, 20.4, 9.5]}, "tech": {"labels": ["No", "Yes", "No internet service"], "values": [41.6, 15.2, 7.4]}, "security": {"labels": ["No", "Yes", "No internet service"], "values": [41.8, 14.6, 7.4]}, "payment": {"labels": ["Electronic check", "Mailed check", "Bank transfer (automatic)", "Credit card (automatic)"], "values": [45.3, 19.2, 16.7, 15.3]}, "charges": {"Churned": 79.6, "Retained": 64.4}};
+const K=D.kpis;
+document.getElementById('k').innerHTML=[['Total Customers',K.total.toLocaleString()],['Churned',K.churned.toLocaleString()],['Churn Rate',K.rate+'%','hot'],['Avg Tenure',K.tenure+' mo'],['Avg Monthly Bill','$'+K.monthly.toFixed(2)]].map(x=>`<div class="kpi ${x[2]||''}"><div class="l">${x[0]}</div><div class="v">${x[1]}</div></div>`).join('');
+const dark=!matchMedia('(prefers-color-scheme: light)').matches;
+const g=dark?'#26333F':'#E3E8EB',t=dark?'#8DA0AF':'#5C6B75';
+Chart.defaults.color=t;
+function bar(id,o,col,pct,horiz){new Chart(document.getElementById(id),{type:'bar',data:{labels:o.labels,datasets:[{data:o.values,backgroundColor:col,borderRadius:4}]},options:{indexAxis:horiz?'y':'x',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:c=>(pct?c.raw+'%':'$'+c.raw)}}},scales:{x:{grid:{display:horiz,color:g},ticks:{font:{size:11}}},y:{grid:{display:!horiz,color:g},ticks:{font:{size:11}}}}}})}
+bar('c1',D.contract,'#E5604D',true);
+bar('c2',D.tenure,'#E8A33D',true);
+bar('c3',D.internet,'#3FB8AF',true);
+bar('c4',D.payment,'#E5604D',true,true);
+bar('c5',D.tech,'#3FB8AF',true);
+bar('c6',{labels:Object.keys(D.charges),values:Object.values(D.charges)},'#E8A33D',false);
+</script></body></html>
